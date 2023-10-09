@@ -5,3 +5,4 @@ full_chat_set.txt
 test.py
 .idea/
 weights.pt
+CSV_manipulation.py

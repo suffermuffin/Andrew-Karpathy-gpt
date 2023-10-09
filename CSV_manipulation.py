@@ -23,11 +23,9 @@ def fix_csv():
 df = pd.read_csv("daniel_ai_dataset_fixed.csv",
                  sep='`')
 
-#23042181
-
 txt_set = ""
 for user_id, user_txt in zip(df['user_id'], df['text']):
-    if user_id: #== 23042181:
+    if user_id:
         txt_set = txt_set + "\n" + user_txt
 
 plane_txt = open('full_chat_set.txt', 'x')
