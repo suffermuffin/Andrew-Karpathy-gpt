@@ -4,12 +4,11 @@ from torch.nn import functional as F
 
 # hypr params
 batch_size = 64  # how many independent sequences will we process in parallel?
-block_size = 256  # what is the maximum context length for predictions?
-max_iter = 2000
-eval_interval = 500
+block_size = 128  # what is the maximum context length for predictions?
+max_iter = 6200
 eval_iters = 200
 eta = 3e-4
-n_emb = 384
+n_emb = 200
 n_head = 6
 n_layer = 6
 dropout_n = 0.2
@@ -18,7 +17,7 @@ device = 'cuda'
 # --------------------
 torch.manual_seed(1337)
 
-with open('full_chat_set.txt', 'r') as f:
+with open('Data/Datasets/Infinite sadness.txt', 'r') as f:
     data = f.read()
 
 # getting channels
@@ -216,7 +215,7 @@ for iter in range(max_iter):
     loss.backward()
     optimizer.step()
 
-PATH = 'weights.pt'
+PATH = 'Data/Weights/Infinite sadness.pt'
 torch.save(model.state_dict(), PATH)
 
 # generate from model
