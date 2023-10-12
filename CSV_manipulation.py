@@ -13,8 +13,8 @@ print(df.head())
 print(df.shape)
 
 txt_set = ""
-for user_id, user_txt in zip(df['user_id'], df['text']): # 23042181
-    if user_id == 23042181:
+for user_id, user_txt in zip(df['user_id'], df['text']):
+    if user_id == 123123:
         txt_set = txt_set + "\n" + user_txt
 
 plane_txt = open('LLM_dataset_2_daniel_plain.txt', 'x')
