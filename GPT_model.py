@@ -1,38 +1,72 @@
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
+from spacy.lang.ru import Russian
 
 # hypr params
 batch_size = 64  # how many independent sequences will we process in parallel?
-block_size = 128  # what is the maximum context length for predictions?
-max_iter = 6200
+block_size = 64  # what is the maximum context length for predictions?
+max_iter = 2000
 eval_iters = 200
 eta = 3e-4
-n_emb = 200
-n_head = 6
-n_layer = 6
-dropout_n = 0.2
+n_emb = 256
+n_head = 10
+n_layer = 10
+dropout_n = 0.35
+data_split = 0.8
 device = 'cuda'
+word_token = True
 
 # --------------------
 torch.manual_seed(1337)
+# src_filename = 'Data/Datasets/Infinite sadness.txt'
+src_filename = 'Data/Datasets/LLM_dataset_2_daniel_plain.txt'
 
-with open('Data/Datasets/Infinite sadness.txt', 'r') as f:
+with open(src_filename, 'r') as f:
     data = f.read()
 
-# getting channels
-vocab = sorted(set(data))
-vocab_size = len(vocab)
+# Word level tokens
+if word_token:
+    def get_word_tokens(text):
+        nlp = Russian()
+        doc = nlp(text)
+        return [token.text for token in doc]
 
-# encoding chars to ints and vise versa
-itos = {key: tocken for key, tocken in enumerate(vocab)}
-stoi = {tocken: key for key, tocken in enumerate(vocab)}
-encode = lambda s: [stoi[c] for c in s]
-decode = lambda i: ''.join([itos[c] for c in i])
+
+    def encode(text):
+        nlp = Russian()
+        doc = nlp(text)
+        tok_text = (token.text for token in doc)
+        return [stoi[c] for c in tok_text]
+
+
+    def decode(enc_text):
+        return ' '.join([itos[c] for c in enc_text])
+
+
+    data = data.lower()
+    vocab = sorted(set(get_word_tokens(data)))
+    vocab_size = len(vocab)
+
+    # encoding chars to ints and vise versa
+    itos = {key: tocken for key, tocken in enumerate(vocab)}
+    stoi = {tocken: key for key, tocken in enumerate(vocab)}
+
+# letter level tokens
+else:
+    # getting channels
+    vocab = sorted(set(data))
+    vocab_size = len(vocab)
+
+    # encoding chars to ints and vise versa
+    itos = {key: tocken for key, tocken in enumerate(vocab)}
+    stoi = {tocken: key for key, tocken in enumerate(vocab)}
+    encode = lambda s: [stoi[c] for c in s]
+    decode = lambda i: ''.join([itos[c] for c in i])
 
 # splitting dataset
 data = torch.tensor(encode(data), dtype=torch.long)  # torch.Size([345885])
-n = int(0.9 * len(data))
+n = int(data_split * len(data))
 train_x = data[:n]
 val_x = data[n:]
 
