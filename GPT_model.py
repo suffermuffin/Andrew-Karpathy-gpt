@@ -27,14 +27,15 @@ with open(src_filename, 'r') as f:
 
 # Word level tokens
 if word_token:
+    nlp = Russian()
+
+
     def get_word_tokens(text):
-        nlp = Russian()
         doc = nlp(text)
         return [token.text for token in doc]
 
 
     def encode(text):
-        nlp = Russian()
         doc = nlp(text)
         tok_text = (token.text for token in doc)
         return [stoi[c] for c in tok_text]
